@@ -5,7 +5,10 @@
 #include <stdint.h>
 #include <pthread.h>
 
-#define BLOCK_SIZE (128 * 1024) // 128 KB chunk size
+// 128 KB block size: balances compression ratio (larger blocks compress better) 
+// and memory consumption under high thread counts (smaller blocks use less RAM).
+#define BLOCK_SIZE (128 * 1024)
+
 
 // Data block representation in the processing pipeline
 typedef struct {
