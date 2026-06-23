@@ -146,3 +146,11 @@ Compressing a 100 MB text dataset:
 *   **Libraries**: Pthreads, Zlib (Static linking)
 *   **Design Patterns**: Producer-Consumer Pipeline, Thread Pool, Sliding Window Ordering, Command Pattern.
 *   **Build Tools**: GNU Make
+
+---
+
+## 📚 Credits & Acknowledgements
+
+This project was inspired by and extends the ideas from:
+*   [File compression and decompression in C using ZLib](https://blog.jyotiprakash.org/file-compression-and-decompression-in-c-using-zlib) by Jyotiprakash Mishra.
+
