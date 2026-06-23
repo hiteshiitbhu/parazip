@@ -1,0 +1,20 @@
+# Compiled binaries
+pzip
+
+# Object files
+obj/
+*.o
+
+# Vendored local dependencies (downloaded and built dynamically by Makefile)
+vendor/
+
+# Test workspace outputs
+test_workspace/
+extraction_workspace/
+test_archive.pzip
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp
