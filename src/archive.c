@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <libgen.h>
 #include <zlib.h>
+#include <errno.h>
 
 // Struct for representing files discovered during scanning
 typedef struct {
@@ -62,12 +63,12 @@ static void scan_recursive(DiscoveredFile **list, int *count, int *cap, const ch
     }
 }
 
-// Recursively create directory components
-static void make_directories_recursive(const char *dir_path) {
+// Recursively create directory components, returning 0 on success or -1 on error
+static int make_directories_recursive(const char *dir_path) {
     char tmp[1024];
     snprintf(tmp, sizeof(tmp), "%s", dir_path);
     int len = strlen(tmp);
-    if (len == 0) return;
+    if (len == 0) return 0;
     
     if (tmp[len - 1] == '/') {
         tmp[len - 1] = '\0';
@@ -76,11 +77,16 @@ static void make_directories_recursive(const char *dir_path) {
     for (char *p = tmp + 1; *p; p++) {
         if (*p == '/') {
             *p = '\0';
-            mkdir(tmp, 0755);
+            if (mkdir(tmp, 0755) != 0 && errno != EEXIST) {
+                return -1;
+            }
             *p = '/';
         }
     }
-    mkdir(tmp, 0755);
+    if (mkdir(tmp, 0755) != 0 && errno != EEXIST) {
+        return -1;
+    }
+    return 0;
 }
 
 // Extracts parent folder path and creates directories
@@ -281,9 +287,12 @@ int extract_archive(const char *archive_path) {
 
         if (S_ISDIR(m->mode)) {
             printf("Creating directory %s... ", m->path);
-            make_directories_recursive(m->path);
-            chmod(m->path, m->mode);
-            printf("\033[1;32m[OK]\033[0m\n");
+            if (make_directories_recursive(m->path) == 0) {
+                chmod(m->path, m->mode);
+                printf("\033[1;32m[OK]\033[0m\n");
+            } else {
+                printf("\033[1;31m[FAILED]\033[0m\n");
+            }
         } else {
             printf("Extracting %s... ", m->path);
             fflush(stdout);
