@@ -68,6 +68,13 @@ int main(int argc, char **argv) {
         }
     }
 
+    // Cap thread count to prevent OS thread thrashing and memory exhaustion
+    if (thread_count > 64) {
+        printf("\033[33mNote:\033[0m Requested %d threads exceeds safety cap. Capping at 64 threads.\n", thread_count);
+        thread_count = 64;
+    }
+
+
     // Get index of positional arguments after options
     int pos_argc = argc - optind;
     char **pos_argv = argv + optind;
