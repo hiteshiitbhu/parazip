@@ -17,9 +17,18 @@ ZLIB_STATIC = $(ZLIB_DIR)/libz.a
 ZLIB_TAR = vendor/zlib-$(ZLIB_VERSION).tar.gz
 ZLIB_URL = https://github.com/madler/zlib/archive/refs/tags/v$(ZLIB_VERSION).tar.gz
 
-.PHONY: all clean distclean test
+.PHONY: all clean distclean test debug
 
 all: $(ZLIB_STATIC) $(BIN)
+
+debug: CFLAGS += -fsanitize=address,undefined -g -O0
+debug: LDFLAGS += -fsanitize=address,undefined
+debug: $(ZLIB_STATIC) $(BIN)
+
+test: $(BIN)
+	chmod +x test.sh
+	./test.sh
+
 
 # Setup and build zlib dependency locally
 $(ZLIB_STATIC):
