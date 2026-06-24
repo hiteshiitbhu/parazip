@@ -35,18 +35,21 @@ void print_progress(double percentage, double speed_mb_s, double ratio, int thre
     if (progress_chars < 0) progress_chars = 0;
     if (progress_chars > bar_width) progress_chars = bar_width;
 
-    printf("\r\033[36mProgress:\033[0m [");
-    for (int i = 0; i < bar_width; i++) {
+    char bar[32];
+    int i;
+    for (i = 0; i < bar_width; i++) {
         if (i < progress_chars) {
-            printf("=");
-        } else if (i == progress_chars) {
-            printf(">");
+            bar[i] = '=';
+        } else if (i == progress_chars && progress_chars < bar_width) {
+            bar[i] = '>';
         } else {
-            printf(" ");
+            bar[i] = ' ';
         }
     }
-    printf("] \033[1;32m%.1f%%\033[0m | \033[33mSpeed:\033[0m %.2f MB/s | \033[35mRatio:\033[0m %.2fx | \033[34mWorkers:\033[0m %d", 
-           percentage, speed_mb_s, ratio, threads_active);
+    bar[bar_width] = '\0';
+
+    printf("\r\033[36mProgress:\033[0m [%s] \033[1;32m%.1f%%\033[0m | \033[33mSpeed:\033[0m %.2f MB/s | \033[35mRatio:\033[0m %.2fx | \033[34mWorkers:\033[0m %d", 
+           bar, percentage, speed_mb_s, ratio, threads_active);
     fflush(stdout);
 }
 
